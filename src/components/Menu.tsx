@@ -1,7 +1,9 @@
 import React from 'react';
-import { Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Eye } from 'lucide-react';
 import { Language } from '../hooks/useLanguage';
 import { content } from '../data/content';
+import { useFeaturedItems, useSiteImages } from '../hooks/useSanity';
+import { urlFor } from '../lib/sanity';
 
 interface MenuProps {
   language: Language;
@@ -10,27 +12,30 @@ interface MenuProps {
 
 export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
   const t = content[language];
+  const { featuredItems, loading: featuredLoading } = useFeaturedItems();
+  const { images, loading: imagesLoading } = useSiteImages();
 
-  const featuredItems = [
+  // Fallback vers les données statiques si Sanity n'est pas disponible
+  const staticFeaturedItems = [
     {
-      ...t.menu.featured.dosaCombo,
+      name: t.menu.featured.dosaCombo.name,
       image: 'https://lh3.googleusercontent.com/pw/AP1GczPnDovnFkv276pvpkv-hgAbq1yYWbtX--ivZA38sB_vcrQRr_9eVdNR9q-A2d0-reIZlXGzC0-ftEjIi16KtpZTBbG4WoDXixXqmKQHhg3VYbX3wPZC_iZo98-aRxT-ohsbCix4nJYCybq5boOwH6Yz=w2732-h1536-s-no-gm?authuser=1'
     },
     {
-      ...t.menu.featured.bowlCombo,
+      name: t.menu.featured.bowlCombo.name,
       image: 'https://lh3.googleusercontent.com/pw/AP1GczNeU6EY4f-o0p08mfPbkkjQJtHrf8U9FQMDa463sZ-YlWGHGOoZ9fFZ6uRXmo1sdUbFKXII0ih4ZsEZSt4WL-RHP_h0aJwVvD1JK7wxnePM_4v7NF1ik6kAXXtWwNEtDTZP1s8wPukpz96bExMvEBY_=w2732-h1536-s-no-gm?authuser=1'
     },
     {
-      ...t.menu.featured.samosaCombo,
+      name: t.menu.featured.samosaCombo.name,
       image: 'https://lh3.googleusercontent.com/pw/AP1GczOtKuXAZLVOsIBNZE0nabIjH-3Ux5uvgtjuskj_UjIDH1kvApZckgJoarps0BCqWWBPf7CsKlDjEYGoXQvu-6xPBv2FFgjQQ3YGZNLjxb7tM_p6p71aqRaRNlumDJyjqwOO7EF69Aa64J1wHsA_mfg5=w2732-h1536-s-no-gm?authuser=1'
     },
     {
-      ...t.menu.featured.rollCombo,
+      name: t.menu.featured.rollCombo.name,
       image: 'https://lh3.googleusercontent.com/pw/AP1GczN9hv4DLAgKIIjAxjXt-T7DzTSzhQQsYXUgg_dc4gxJko-7gV8v2Ar82YaKq8GQVJRCO74gTVIruDJih2z6SaZf-TuwH1hR5S9yWEIR0b9FKAD2gGzTQYvMbY_sMATGXMTH5lS4dKZSgqQQlLkS2iKl=w2732-h1536-s-no-gm?authuser=1'
     }
   ];
 
-  const galleryImages = [
+  const staticGalleryImages = [
     'https://lh3.googleusercontent.com/pw/AP1GczPZc6pHW83R3pn1w_nJEBjE2ZDqxfLaIIIwVqS4hi2OUoFCCG3V0UOof9mB6o9A5_GaVUSOlCzK3kJ1lgteStI7wqifLB4RmeE3pxR-WT_bEb0cLHQ5Vmztocvqo9yjqp8fJGa6Deq7_oFsyrqy6WNz=w2510-h2008-s-no-gm?authuser=1',
     'https://lh3.googleusercontent.com/pw/AP1GczNI3h8huWGhq-LZF1lRtxwl99RzmR_tSyAj09Gz-xzh7Xx1pUYx0qHH6vxPci5qdlt_-8nTe7bo7YBOeIvXW7lqV04yBEDn7WJVEDAA9YPFZi4UgAjwdOUuYKEF27Bv1RP7S0BIdu15M0mq7DSFzfrX=w2510-h2008-s-no-gm?authuser=1',
     'https://lh3.googleusercontent.com/pw/AP1GczOl3-fUU_SRLya8jrR3fTzxmV5HqlCOASebmdXNeQ0wVMZclrTuyqCm4nQAfjFeLeUAsTVba2cvqJkpHkgWQtd7ZnlkU5Mk63b3Bj4KnD-pnF8ltr5q4ii9qZISjFAMVVMoUMTnNl3uoiH5DVyLLjmB=w2510-h2008-s-no-gm?authuser=1',
@@ -38,6 +43,19 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
     'https://lh3.googleusercontent.com/pw/AP1GczPB4Ll-a9DXjjGtL3vtKopIU89LdBwwe-7r67gAYgP-D8rS7aiiKGazigRQZEi_l7WcSaA28al_PWaJKAoyWprIBkAfr2a66gqB16KR8LLtpQUzcuY5qZlhdeNJC16CozeqX0LdUV099lXowL8hVrWO=w2510-h2008-s-no-gm?authuser=1',
     'https://lh3.googleusercontent.com/pw/AP1GczOi3wWOxW0kHM03msY4zo43Ds5R_WkuulwopgEdRxPA9eqm3wA8SZRyYOgcVvRrgrTF0kmALlBNBfNhI2phLco1U5t3vRr8kbvK8_UpA9_l0WULcmpwxU92R33WD_VsSWNERKvZwR5-IaCgCkXK6lFM=w1156-h921-s-no-gm?authuser=1'
   ];
+
+  // Utilise les données Sanity si disponibles, sinon les données statiques
+  const displayFeaturedItems = !featuredLoading && featuredItems?.length > 0 
+    ? featuredItems.slice(0, 4).map(item => ({
+        name: item.name[language] || item.name.en,
+        image: item.image ? urlFor(item.image).width(400).height(300).url() : '',
+        price: item.price
+      }))
+    : staticFeaturedItems;
+
+  const displayGalleryImages = !imagesLoading && images?.galleryImages?.length > 0
+    ? images.galleryImages.map(img => urlFor(img).width(300).height(200).url())
+    : staticGalleryImages;
 
   return (
     <section id="menu" className="py-20 bg-white">
@@ -59,9 +77,16 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
           </button>
         </div>
 
+        {/* Loading State */}
+        {(featuredLoading || imagesLoading) && (
+          <div className="text-center mb-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          </div>
+        )}
+
         {/* Featured Items */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {featuredItems.map((item, index) => (
+          {displayFeaturedItems.map((item, index) => (
             <div 
               key={index}
               className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up"
@@ -80,6 +105,11 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
                 <h3 className="text-xl font-semibold text-primary mb-2 text-center">
                   {item.name}
                 </h3>
+                {item.price && (
+                  <p className="text-center text-gray-600 font-semibold">
+                    €{item.price.toFixed(2)}
+                  </p>
+                )}
               </div>
             </div>
           ))}
@@ -94,7 +124,7 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
         
         <div className="relative overflow-hidden">
           <div className="flex animate-parallax space-x-6">
-            {[...galleryImages, ...galleryImages].map((image, index) => (
+            {[...displayGalleryImages, ...displayGalleryImages].map((image, index) => (
               <div key={index} className="flex-shrink-0">
                 <img
                   src={image}

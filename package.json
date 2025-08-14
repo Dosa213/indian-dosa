@@ -1,18 +1,25 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "indian-dosa-website",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sanity": "sanity dev"
   },
   "dependencies": {
+    "@sanity/client": "^6.29.1",
+    "@sanity/image-url": "^1.1.0",
+    "@sanity/vision": "^3.99.0",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-is": "^19.1.1",
+    "sanity": "^3.99.0",
+    "styled-components": "^6.1.19"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",

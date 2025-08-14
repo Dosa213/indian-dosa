@@ -1,7 +1,9 @@
 import React from 'react';
-import { Play, Eye, Calendar } from 'lucide-react';
+import { Eye, Calendar } from 'lucide-react';
 import { Language } from '../hooks/useLanguage';
 import { content } from '../data/content';
+import { useSiteImages } from '../hooks/useSanity';
+import { urlFor } from '../lib/sanity';
 
 interface HeroProps {
   language: Language;
@@ -11,18 +13,34 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ language, onMenuClick, onReserveClick }) => {
   const t = content[language];
+  const { images, loading } = useSiteImages();
+
+  // Image de fallback si Sanity n'est pas disponible
+  const fallbackImage = 'url("https://lh3.googleusercontent.com/pw/AP1GczOFP3Ex5PFOy_-__Q7A77xiAseYL-BBeQNnIVYMNDPSHnNUQGGKvsaAGh9yky4VaNqlkXvDr00gZ0oxicXQZeR75JBKxaMeh72vCMvUgdslxpVG9y3qTLBvjAxGg4k7-jn5ciWan3pTWyvEc_YM8uLT=w3216-h2008-s-no-gm?authuser=1")';
+
+  // Utilise l'image Sanity si disponible, sinon l'image de fallback
+  const heroBackgroundImage = !loading && images?.heroImage 
+    ? `url("${urlFor(images.heroImage).width(1920).height(1080).url()}")` 
+    : fallbackImage;
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image with Parallax Effect */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-fixed"
+        className="absolute inset-0 bg-cover bg-center bg-fixed transition-all duration-1000"
         style={{
-          backgroundImage: 'url("https://lh3.googleusercontent.com/pw/AP1GczOFP3Ex5PFOy_-__Q7A77xiAseYL-BBeQNnIVYMNDPSHnNUQGGKvsaAGh9yky4VaNqlkXvDr00gZ0oxicXQZeR75JBKxaMeh72vCMvUgdslxpVG9y3qTLBvjAxGg4k7-jn5ciWan3pTWyvEc_YM8uLT=w3216-h2008-s-no-gm?authuser=1")',
+          backgroundImage: heroBackgroundImage,
         }}
       >
         <div className="absolute inset-0 bg-black/40" />
       </div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="relative z-10 text-center text-white px-6 max-w-4xl mx-auto animate-fade-in">
