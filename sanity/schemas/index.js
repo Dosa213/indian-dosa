@@ -82,6 +82,118 @@ export const schemaTypes = [
     ]
   },
 
+  // Schema pour les locations
+  {
+    name: 'locations',
+    title: 'Locations',
+    type: 'document',
+    fields: [
+      {
+        name: 'title',
+        title: 'Title',
+        type: 'string'
+      },
+      {
+        name: 'restaurants',
+        title: 'Restaurant Locations',
+        type: 'array',
+        of: [
+          {
+            type: 'object',
+            fields: [
+              {
+                name: 'name',
+                title: 'Restaurant Name',
+                type: 'string'
+              },
+              {
+                name: 'address',
+                title: 'Full Address',
+                type: 'text'
+              },
+              {
+                name: 'area',
+                title: 'Area/Neighborhood',
+                type: 'string'
+              },
+              {
+                name: 'phone',
+                title: 'Phone Number',
+                type: 'string'
+              },
+              {
+                name: 'email',
+                title: 'Email Address',
+                type: 'string'
+              },
+              {
+                name: 'mapUrl',
+                title: 'Google Maps URL',
+                type: 'url'
+              },
+              {
+                name: 'embedUrl',
+                title: 'Google Maps Embed URL',
+                type: 'url'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: 'foodTruck',
+        title: 'Food Truck Information',
+        type: 'object',
+        fields: [
+          {
+            name: 'name',
+            title: 'Food Truck Name',
+            type: 'object',
+            fields: [
+              {
+                name: 'en',
+                title: 'English',
+                type: 'string'
+              },
+              {
+                name: 'pt',
+                title: 'Portuguese',
+                type: 'string'
+              }
+            ]
+          },
+          {
+            name: 'description',
+            title: 'Service Area Description',
+            type: 'object',
+            fields: [
+              {
+                name: 'en',
+                title: 'English',
+                type: 'string'
+              },
+              {
+                name: 'pt',
+                title: 'Portuguese',
+                type: 'string'
+              }
+            ]
+          },
+          {
+            name: 'phone',
+            title: 'Contact Phone',
+            type: 'string'
+          },
+          {
+            name: 'email',
+            title: 'Contact Email',
+            type: 'string'
+          }
+        ]
+      }
+    ]
+  },
+
   // Schema pour les informations du footer
   {
     name: 'footerInfo',

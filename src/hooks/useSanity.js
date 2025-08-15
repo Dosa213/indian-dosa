@@ -53,28 +53,15 @@ export const useFooterInfo = () => {
           contactInfo{
             phone,
             email,
-            hours{
-              en,
-              pt
-            }
+            hours
           },
-          socialMedia{
-            instagram,
-            youtube,
-            tiktok,
-            whatsapp,
-            googleMaps
-          },
-          copyright{
-            en,
-            pt
-          }
+          socialMedia,
+          copyright
         }`
         
         const result = await client.fetch(query)
         setFooterInfo(result)
       } catch (err) {
-        console.error('Error fetching footer info:', err)
         setError(err)
       } finally {
         setLoading(false)
@@ -111,7 +98,6 @@ export const useMenuItems = () => {
         const result = await client.fetch(query)
         setMenuItems(result)
       } catch (err) {
-        console.error('Error fetching menu items:', err)
         setError(err)
       } finally {
         setLoading(false)
@@ -122,6 +108,50 @@ export const useMenuItems = () => {
   }, [])
 
   return { menuItems, loading, error }
+}
+
+// Hook pour récupérer les locations
+export const useLocations = () => {
+  const [locations, setLocations] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const query = `*[_type == "locations"][0]{
+          title,
+          restaurants[]{
+            name,
+            address,
+            area,
+            phone,
+            email,
+            mapUrl,
+            embedUrl
+          },
+          foodTruck{
+            name,
+            description,
+            phone,
+            email
+          }
+        }`
+        
+        const result = await client.fetch(query)
+        setLocations(result)
+      } catch (err) {
+        console.error('Error fetching locations:', err)
+        setError(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchLocations()
+  }, [])
+
+  return { locations, loading, error }
 }
 
 // Hook pour récupérer les items featured
@@ -147,7 +177,6 @@ export const useFeaturedItems = () => {
         const result = await client.fetch(query)
         setFeaturedItems(result)
       } catch (err) {
-        console.error('Error fetching featured items:', err)
         setError(err)
       } finally {
         setLoading(false)
