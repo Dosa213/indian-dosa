@@ -6,27 +6,21 @@ export const schemaTypes = [
     title: 'Site Images',
     type: 'document',
     fields: [
-      {
-        name: 'title',
-        title: 'Title',
-        type: 'string'
-      },
+      { name: 'title', title: 'Title', type: 'string' },
       {
         name: 'heroImage',
         title: 'Hero Background Image',
         type: 'image',
-        options: {
-          hotspot: true
-        }
+        options: { hotspot: true }
       },
       {
         name: 'logo',
         title: 'Site Logo',
         type: 'image',
-        options: {
-          hotspot: true
-        }
+        options: { hotspot: true }
       },
+
+      // menuImages
       {
         name: 'menuImages',
         title: 'Menu Images',
@@ -35,31 +29,25 @@ export const schemaTypes = [
           {
             type: 'object',
             fields: [
-              {
-                name: 'image',
-                title: 'Image',
-                type: 'image',
-                options: { hotspot: true }
-              },
+              { name: 'image', title: 'Image', type: 'image', options: { hotspot: true } },
               { name: 'alt', title: 'Alt Text', type: 'string' },
               {
                 name: 'category',
                 title: 'Category',
                 type: 'string',
-                options: {
-                  list: [
-                    { title: 'Dosas', value: 'dosas' },
-                    { title: 'Curries', value: 'curries' },
-                    { title: 'Snacks', value: 'snacks' },
-                    { title: 'Desserts', value: 'desserts' },
-                    { title: 'Beverages', value: 'beverages' }
-                  ]
-                }
+                options: { list: [
+                  { title: 'Dosas', value: 'dosas' },
+                  { title: 'Curries', value: 'curries' },
+                  { title: 'Snacks', value: 'snacks' },
+                  { title: 'Desserts', value: 'desserts' },
+                  { title: 'Beverages', value: 'beverages' }
+                ]}
               }
             ]
           }
         ]
       },
+
       // Food gallery (garder si tu veux)
       {
         name: 'galleryImages',
@@ -78,7 +66,7 @@ export const schemaTypes = [
         options: { sortable: true }
       },
 
-      // NOUVEAU : eventsGallery (images spécifiques aux events)
+      // Events gallery (déjà demandé)
       {
         name: 'eventsGallery',
         title: 'Events Gallery Images',
@@ -87,12 +75,45 @@ export const schemaTypes = [
           {
             type: 'object',
             fields: [
-              {
-                name: 'image',
-                title: 'Image',
-                type: 'image',
-                options: { hotspot: true }
-              },
+              { name: 'image', title: 'Image', type: 'image', options: { hotspot: true } },
+              { name: 'alt', title: 'Alt Text', type: 'string' },
+              { name: 'caption', title: 'Caption', type: 'string' },
+              { name: 'order', title: 'Order', type: 'number' }
+            ]
+          }
+        ],
+        options: { sortable: true }
+      },
+
+      // Coffee gallery (optionnel)
+      {
+        name: 'coffeeGallery',
+        title: 'Coffee Gallery Images',
+        type: 'array',
+        of: [
+          {
+            type: 'object',
+            fields: [
+              { name: 'image', title: 'Image', type: 'image', options: { hotspot: true } },
+              { name: 'alt', title: 'Alt Text', type: 'string' },
+              { name: 'caption', title: 'Caption', type: 'string' },
+              { name: 'order', title: 'Order', type: 'number' }
+            ]
+          }
+        ],
+        options: { sortable: true }
+      },
+
+      // NOUVEAU : dosaImages (images spécifiques aux Dosa/Coffee section)
+      {
+        name: 'dosaImages',
+        title: 'Dosa / Coffee Images',
+        type: 'array',
+        of: [
+          {
+            type: 'object',
+            fields: [
+              { name: 'image', title: 'Image', type: 'image', options: { hotspot: true } },
               { name: 'alt', title: 'Alt Text', type: 'string' },
               { name: 'caption', title: 'Caption', type: 'string' },
               { name: 'order', title: 'Order', type: 'number' }
@@ -101,10 +122,12 @@ export const schemaTypes = [
         ],
         options: { sortable: true }
       }
+
+      // (tu peux ajouter d'autres champs plus bas si nécessaire)
     ]
   },
 
-  // Schema pour les locations
+  // other schemas (locations, footerInfo, menuItem) — copie les tiennes ici
   {
     name: 'locations',
     title: 'Locations',
@@ -136,22 +159,12 @@ export const schemaTypes = [
         type: 'object',
         fields: [
           {
-            name: 'name',
-            title: 'Food Truck Name',
-            type: 'object',
-            fields: [
-              { name: 'en', title: 'English', type: 'string' },
-              { name: 'pt', title: 'Portuguese', type: 'string' }
-            ]
+            name: 'name', title: 'Food Truck Name', type: 'object',
+            fields: [{ name: 'en', title: 'English', type: 'string' }, { name: 'pt', title: 'Portuguese', type: 'string' }]
           },
           {
-            name: 'description',
-            title: 'Service Area Description',
-            type: 'object',
-            fields: [
-              { name: 'en', title: 'English', type: 'string' },
-              { name: 'pt', title: 'Portuguese', type: 'string' }
-            ]
+            name: 'description', title: 'Service Area Description', type: 'object',
+            fields: [{ name: 'en', title: 'English', type: 'string' }, { name: 'pt', title: 'Portuguese', type: 'string' }]
           },
           { name: 'phone', title: 'Contact Phone', type: 'string' },
           { name: 'email', title: 'Contact Email', type: 'string' }
@@ -160,7 +173,7 @@ export const schemaTypes = [
     ]
   },
 
-  // Schema pour les informations du footer
+  // footerInfo and menuItem ... (garde tes définitions actuelles)
   {
     name: 'footerInfo',
     title: 'Footer Information',
@@ -178,10 +191,7 @@ export const schemaTypes = [
             name: 'hours',
             title: 'Opening Hours',
             type: 'object',
-            fields: [
-              { name: 'en', title: 'English', type: 'string' },
-              { name: 'pt', title: 'Portuguese', type: 'string' }
-            ]
+            fields: [{ name: 'en', title: 'English', type: 'string' }, { name: 'pt', title: 'Portuguese', type: 'string' }]
           }
         ]
       },
@@ -201,75 +211,43 @@ export const schemaTypes = [
         name: 'copyright',
         title: 'Copyright Text',
         type: 'object',
-        fields: [
-          { name: 'en', title: 'English', type: 'string' },
-          { name: 'pt', title: 'Portuguese', type: 'string' }
-        ]
+        fields: [{ name: 'en', title: 'English', type: 'string' }, { name: 'pt', title: 'Portuguese', type: 'string' }]
       }
     ]
   },
 
-  // Schema pour le menu
   {
     name: 'menuItem',
     title: 'Menu Items',
     type: 'document',
     fields: [
       {
-        name: 'name',
-        title: 'Item Name',
-        type: 'object',
-        fields: [
-          { name: 'en', title: 'English', type: 'string' },
-          { name: 'pt', title: 'Portuguese', type: 'string' }
-        ]
+        name: 'name', title: 'Item Name', type: 'object',
+        fields: [{ name: 'en', title: 'English', type: 'string' }, { name: 'pt', title: 'Portuguese', type: 'string' }]
       },
       {
-        name: 'description',
-        title: 'Description',
-        type: 'object',
-        fields: [
-          { name: 'en', title: 'English', type: 'text' },
-          { name: 'pt', title: 'Portuguese', type: 'text' }
-        ]
+        name: 'description', title: 'Description', type: 'object',
+        fields: [{ name: 'en', title: 'English', type: 'text' }, { name: 'pt', title: 'Portuguese', type: 'text' }]
       },
       { name: 'price', title: 'Price', type: 'number' },
       {
-        name: 'category',
-        title: 'Category',
-        type: 'string',
-        options: {
-          list: [
-            { title: 'Starters', value: 'starters' },
-            { title: 'Dosas', value: 'dosas' },
-            { title: 'Curries', value: 'curries' },
-            { title: 'Snacks', value: 'snacks' },
-            { title: 'Desserts', value: 'desserts' },
-            { title: 'Beverages', value: 'beverages' }
-          ]
-        }
+        name: 'category', title: 'Category', type: 'string',
+        options: { list: [
+          { title: 'Starters', value: 'starters' }, { title: 'Dosas', value: 'dosas' },
+          { title: 'Curries', value: 'curries' }, { title: 'Snacks', value: 'snacks' },
+          { title: 'Desserts', value: 'desserts' }, { title: 'Beverages', value: 'beverages' }
+        ]}
       },
       { name: 'image', title: 'Item Image', type: 'image', options: { hotspot: true } },
       { name: 'isCombo', title: 'Is Combo Item', type: 'boolean' },
       { name: 'isFeatured', title: 'Featured Item', type: 'boolean' },
       {
-        name: 'tags',
-        title: 'Tags',
-        type: 'array',
-        of: [
-          {
-            type: 'string',
-            options: {
-              list: [
-                { title: 'Vegan', value: 'vegan' },
-                { title: 'Vegetarian', value: 'vegetarian' },
-                { title: 'Gluten Free', value: 'gluten-free' },
-                { title: 'Spicy', value: 'spicy' },
-                { title: 'Popular', value: 'popular' }
-              ]
-            }
-          }
-        ]
+        name: 'tags', title: 'Tags', type: 'array',
+        of: [{ type: 'string', options: { list: [
+          { title: 'Vegan', value: 'vegan' }, { title: 'Vegetarian', value: 'vegetarian' },
+          { title: 'Gluten Free', value: 'gluten-free' }, { title: 'Spicy', value: 'spicy' },
+          { title: 'Popular', value: 'popular' }
+        ]}}]
       }
     ]
   }

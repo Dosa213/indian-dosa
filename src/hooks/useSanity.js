@@ -2,13 +2,18 @@
 import { useState, useEffect } from 'react'
 import { client } from '../lib/sanity'
 
-// Hook pour récupérer les images du site
+/**
+ * Hook: useSiteImages
+ * Récupère le document siteImages et plusieurs galleries (dosaImages, coffeeGallery, eventsGallery, galleryImages, menuImages)
+ */
 export const useSiteImages = () => {
   const [images, setImages] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    let mounted = true
+
     const fetchImages = async () => {
       try {
         const query = `*[_type == "siteImages"][0]{
@@ -16,33 +21,42 @@ export const useSiteImages = () => {
           heroImage,
           logo,
           "menuImages": menuImages[]{ image, alt, category },
-          "galleryImages": galleryImages[]{ image, alt, caption },
-          "eventsGallery": eventsGallery[]{ image, alt, caption, order }
+          "galleryImages": galleryImages[]{ image, alt, caption, order },
+          "eventsGallery": eventsGallery[]{ image, alt, caption, order },
+          "coffeeGallery": coffeeGallery[]{ image, alt, caption, order },
+          "dosaImages": dosaImages[]{ image, alt, caption, order }
         }`
 
         const result = await client.fetch(query)
-        setImages(result)
+        if (mounted) setImages(result)
       } catch (err) {
         console.error('Error fetching site images:', err)
-        setError(err)
+        if (mounted) setError(err)
       } finally {
-        setLoading(false)
+        if (mounted) setLoading(false)
       }
     }
 
     fetchImages()
+    return () => {
+      mounted = false
+    }
   }, [])
 
   return { images, loading, error }
 }
 
-// Hook pour récupérer les informations du footer
+/**
+ * Hook: useFooterInfo
+ * Récupère le document footerInfo
+ */
 export const useFooterInfo = () => {
   const [footerInfo, setFooterInfo] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    let mounted = true
     const fetchFooterInfo = async () => {
       try {
         const query = `*[_type == "footerInfo"][0]{
@@ -55,29 +69,34 @@ export const useFooterInfo = () => {
           socialMedia,
           copyright
         }`
-
         const result = await client.fetch(query)
-        setFooterInfo(result)
+        if (mounted) setFooterInfo(result)
       } catch (err) {
-        setError(err)
+        console.error('Error fetching footer info:', err)
+        if (mounted) setError(err)
       } finally {
-        setLoading(false)
+        if (mounted) setLoading(false)
       }
     }
 
     fetchFooterInfo()
+    return () => { mounted = false }
   }, [])
 
   return { footerInfo, loading, error }
 }
 
-// Hook pour récupérer les items du menu
+/**
+ * Hook: useMenuItems
+ * Récupère tous les documents menuItem (triés)
+ */
 export const useMenuItems = () => {
   const [menuItems, setMenuItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    let mounted = true
     const fetchMenuItems = async () => {
       try {
         const query = `*[_type == "menuItem"] | order(category asc, name.en asc){
@@ -91,29 +110,34 @@ export const useMenuItems = () => {
           isFeatured,
           tags
         }`
-
         const result = await client.fetch(query)
-        setMenuItems(result)
+        if (mounted) setMenuItems(result)
       } catch (err) {
-        setError(err)
+        console.error('Error fetching menu items:', err)
+        if (mounted) setError(err)
       } finally {
-        setLoading(false)
+        if (mounted) setLoading(false)
       }
     }
 
     fetchMenuItems()
+    return () => { mounted = false }
   }, [])
 
   return { menuItems, loading, error }
 }
 
-// Hook pour récupérer les locations
+/**
+ * Hook: useLocations
+ * Récupère le document locations (restaurants + foodTruck)
+ */
 export const useLocations = () => {
   const [locations, setLocations] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    let mounted = true
     const fetchLocations = async () => {
       try {
         const query = `*[_type == "locations"][0]{
@@ -134,30 +158,34 @@ export const useLocations = () => {
             email
           }
         }`
-
         const result = await client.fetch(query)
-        setLocations(result)
+        if (mounted) setLocations(result)
       } catch (err) {
         console.error('Error fetching locations:', err)
-        setError(err)
+        if (mounted) setError(err)
       } finally {
-        setLoading(false)
+        if (mounted) setLoading(false)
       }
     }
 
     fetchLocations()
+    return () => { mounted = false }
   }, [])
 
   return { locations, loading, error }
 }
 
-// Hook pour récupérer les items featured
+/**
+ * Hook: useFeaturedItems
+ * Récupère les menuItem où isFeatured == true
+ */
 export const useFeaturedItems = () => {
   const [featuredItems, setFeaturedItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    let mounted = true
     const fetchFeaturedItems = async () => {
       try {
         const query = `*[_type == "menuItem" && isFeatured == true] | order(name.en asc){
@@ -170,17 +198,18 @@ export const useFeaturedItems = () => {
           isCombo,
           tags
         }`
-
         const result = await client.fetch(query)
-        setFeaturedItems(result)
+        if (mounted) setFeaturedItems(result)
       } catch (err) {
-        setError(err)
+        console.error('Error fetching featured items:', err)
+        if (mounted) setError(err)
       } finally {
-        setLoading(false)
+        if (mounted) setLoading(false)
       }
     }
 
     fetchFeaturedItems()
+    return () => { mounted = false }
   }, [])
 
   return { featuredItems, loading, error }
