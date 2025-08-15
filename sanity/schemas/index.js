@@ -121,6 +121,17 @@ export const schemaTypes = [
           }
         ],
         options: { sortable: true }
+      },
+
+      // === CHAMP AJOUTÉ : fichier PDF du menu ===
+      {
+        name: 'menuPdf',
+        title: 'Menu PDF',
+        type: 'file',
+        options: {
+          accept: '.pdf'
+        },
+        description: 'Upload the PDF menu here (client can replace this file)'
       }
 
       // (tu peux ajouter d'autres champs plus bas si nécessaire)

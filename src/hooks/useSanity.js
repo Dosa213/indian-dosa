@@ -5,6 +5,7 @@ import { client } from '../lib/sanity'
 /**
  * Hook: useSiteImages
  * Récupère le document siteImages et plusieurs galleries (dosaImages, coffeeGallery, eventsGallery, galleryImages, menuImages)
+ * Expose aussi menuPdfUrl (menuPdf.asset->url)
  */
 export const useSiteImages = () => {
   const [images, setImages] = useState(null)
@@ -24,7 +25,8 @@ export const useSiteImages = () => {
           "galleryImages": galleryImages[]{ image, alt, caption, order },
           "eventsGallery": eventsGallery[]{ image, alt, caption, order },
           "coffeeGallery": coffeeGallery[]{ image, alt, caption, order },
-          "dosaImages": dosaImages[]{ image, alt, caption, order }
+          "dosaImages": dosaImages[]{ image, alt, caption, order },
+          "menuPdfUrl": menuPdf.asset->url
         }`
 
         const result = await client.fetch(query)
@@ -44,6 +46,17 @@ export const useSiteImages = () => {
   }, [])
 
   return { images, loading, error }
+}
+
+/**
+ * Wrapper legacy: useSanity()
+ * Retourne les champs exposés dans images directement (pour compatibilité avec ton code existant).
+ * Exemple d'utilisation : const sanityData = useSanity(); puis sanityData.menuPdfUrl
+ */
+export const useSanity = () => {
+  const { images, loading, error } = useSiteImages()
+  // Spread images only si présent, sinon retourne objet vide
+  return { ...(images || {}), loading, error }
 }
 
 /**
