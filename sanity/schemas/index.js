@@ -39,15 +39,9 @@ export const schemaTypes = [
                 name: 'image',
                 title: 'Image',
                 type: 'image',
-                options: {
-                  hotspot: true
-                }
+                options: { hotspot: true }
               },
-              {
-                name: 'alt',
-                title: 'Alt Text',
-                type: 'string'
-              },
+              { name: 'alt', title: 'Alt Text', type: 'string' },
               {
                 name: 'category',
                 title: 'Category',
@@ -66,18 +60,46 @@ export const schemaTypes = [
           }
         ]
       },
+      // Food gallery (garder si tu veux)
       {
         name: 'galleryImages',
         title: 'Food Gallery Images',
         type: 'array',
         of: [
           {
-            type: 'image',
-            options: {
-              hotspot: true
-            }
+            type: 'object',
+            fields: [
+              { name: 'image', title: 'Image', type: 'image', options: { hotspot: true } },
+              { name: 'alt', title: 'Alt Text', type: 'string' },
+              { name: 'caption', title: 'Caption', type: 'string' }
+            ]
           }
-        ]
+        ],
+        options: { sortable: true }
+      },
+
+      // NOUVEAU : eventsGallery (images spécifiques aux events)
+      {
+        name: 'eventsGallery',
+        title: 'Events Gallery Images',
+        type: 'array',
+        of: [
+          {
+            type: 'object',
+            fields: [
+              {
+                name: 'image',
+                title: 'Image',
+                type: 'image',
+                options: { hotspot: true }
+              },
+              { name: 'alt', title: 'Alt Text', type: 'string' },
+              { name: 'caption', title: 'Caption', type: 'string' },
+              { name: 'order', title: 'Order', type: 'number' }
+            ]
+          }
+        ],
+        options: { sortable: true }
       }
     ]
   },
@@ -88,11 +110,7 @@ export const schemaTypes = [
     title: 'Locations',
     type: 'document',
     fields: [
-      {
-        name: 'title',
-        title: 'Title',
-        type: 'string'
-      },
+      { name: 'title', title: 'Title', type: 'string' },
       {
         name: 'restaurants',
         title: 'Restaurant Locations',
@@ -101,41 +119,13 @@ export const schemaTypes = [
           {
             type: 'object',
             fields: [
-              {
-                name: 'name',
-                title: 'Restaurant Name',
-                type: 'string'
-              },
-              {
-                name: 'address',
-                title: 'Full Address',
-                type: 'text'
-              },
-              {
-                name: 'area',
-                title: 'Area/Neighborhood',
-                type: 'string'
-              },
-              {
-                name: 'phone',
-                title: 'Phone Number',
-                type: 'string'
-              },
-              {
-                name: 'email',
-                title: 'Email Address',
-                type: 'string'
-              },
-              {
-                name: 'mapUrl',
-                title: 'Google Maps URL',
-                type: 'url'
-              },
-              {
-                name: 'embedUrl',
-                title: 'Google Maps Embed URL',
-                type: 'url'
-              }
+              { name: 'name', title: 'Restaurant Name', type: 'string' },
+              { name: 'address', title: 'Full Address', type: 'text' },
+              { name: 'area', title: 'Area/Neighborhood', type: 'string' },
+              { name: 'phone', title: 'Phone Number', type: 'string' },
+              { name: 'email', title: 'Email Address', type: 'string' },
+              { name: 'mapUrl', title: 'Google Maps URL', type: 'url' },
+              { name: 'embedUrl', title: 'Google Maps Embed URL', type: 'url' }
             ]
           }
         ]
@@ -150,16 +140,8 @@ export const schemaTypes = [
             title: 'Food Truck Name',
             type: 'object',
             fields: [
-              {
-                name: 'en',
-                title: 'English',
-                type: 'string'
-              },
-              {
-                name: 'pt',
-                title: 'Portuguese',
-                type: 'string'
-              }
+              { name: 'en', title: 'English', type: 'string' },
+              { name: 'pt', title: 'Portuguese', type: 'string' }
             ]
           },
           {
@@ -167,28 +149,12 @@ export const schemaTypes = [
             title: 'Service Area Description',
             type: 'object',
             fields: [
-              {
-                name: 'en',
-                title: 'English',
-                type: 'string'
-              },
-              {
-                name: 'pt',
-                title: 'Portuguese',
-                type: 'string'
-              }
+              { name: 'en', title: 'English', type: 'string' },
+              { name: 'pt', title: 'Portuguese', type: 'string' }
             ]
           },
-          {
-            name: 'phone',
-            title: 'Contact Phone',
-            type: 'string'
-          },
-          {
-            name: 'email',
-            title: 'Contact Email',
-            type: 'string'
-          }
+          { name: 'phone', title: 'Contact Phone', type: 'string' },
+          { name: 'email', title: 'Contact Email', type: 'string' }
         ]
       }
     ]
@@ -200,41 +166,21 @@ export const schemaTypes = [
     title: 'Footer Information',
     type: 'document',
     fields: [
-      {
-        name: 'title',
-        title: 'Title',
-        type: 'string'
-      },
+      { name: 'title', title: 'Title', type: 'string' },
       {
         name: 'contactInfo',
         title: 'Contact Information',
         type: 'object',
         fields: [
-          {
-            name: 'phone',
-            title: 'Phone Number',
-            type: 'string'
-          },
-          {
-            name: 'email',
-            title: 'Email Address',
-            type: 'string'
-          },
+          { name: 'phone', title: 'Phone Number', type: 'string' },
+          { name: 'email', title: 'Email Address', type: 'string' },
           {
             name: 'hours',
             title: 'Opening Hours',
             type: 'object',
             fields: [
-              {
-                name: 'en',
-                title: 'English',
-                type: 'string'
-              },
-              {
-                name: 'pt',
-                title: 'Portuguese',
-                type: 'string'
-              }
+              { name: 'en', title: 'English', type: 'string' },
+              { name: 'pt', title: 'Portuguese', type: 'string' }
             ]
           }
         ]
@@ -244,31 +190,11 @@ export const schemaTypes = [
         title: 'Social Media Links',
         type: 'object',
         fields: [
-          {
-            name: 'instagram',
-            title: 'Instagram URL',
-            type: 'url'
-          },
-          {
-            name: 'youtube',
-            title: 'YouTube URL',
-            type: 'url'
-          },
-          {
-            name: 'tiktok',
-            title: 'TikTok URL',
-            type: 'url'
-          },
-          {
-            name: 'whatsapp',
-            title: 'WhatsApp Number',
-            type: 'string'
-          },
-          {
-            name: 'googleMaps',
-            title: 'Google Maps URL',
-            type: 'url'
-          }
+          { name: 'instagram', title: 'Instagram URL', type: 'url' },
+          { name: 'youtube', title: 'YouTube URL', type: 'url' },
+          { name: 'tiktok', title: 'TikTok URL', type: 'url' },
+          { name: 'whatsapp', title: 'WhatsApp Number', type: 'string' },
+          { name: 'googleMaps', title: 'Google Maps URL', type: 'url' }
         ]
       },
       {
@@ -276,16 +202,8 @@ export const schemaTypes = [
         title: 'Copyright Text',
         type: 'object',
         fields: [
-          {
-            name: 'en',
-            title: 'English',
-            type: 'string'
-          },
-          {
-            name: 'pt',
-            title: 'Portuguese',
-            type: 'string'
-          }
+          { name: 'en', title: 'English', type: 'string' },
+          { name: 'pt', title: 'Portuguese', type: 'string' }
         ]
       }
     ]
@@ -302,16 +220,8 @@ export const schemaTypes = [
         title: 'Item Name',
         type: 'object',
         fields: [
-          {
-            name: 'en',
-            title: 'English',
-            type: 'string'
-          },
-          {
-            name: 'pt',
-            title: 'Portuguese',
-            type: 'string'
-          }
+          { name: 'en', title: 'English', type: 'string' },
+          { name: 'pt', title: 'Portuguese', type: 'string' }
         ]
       },
       {
@@ -319,23 +229,11 @@ export const schemaTypes = [
         title: 'Description',
         type: 'object',
         fields: [
-          {
-            name: 'en',
-            title: 'English',
-            type: 'text'
-          },
-          {
-            name: 'pt',
-            title: 'Portuguese',
-            type: 'text'
-          }
+          { name: 'en', title: 'English', type: 'text' },
+          { name: 'pt', title: 'Portuguese', type: 'text' }
         ]
       },
-      {
-        name: 'price',
-        title: 'Price',
-        type: 'number'
-      },
+      { name: 'price', title: 'Price', type: 'number' },
       {
         name: 'category',
         title: 'Category',
@@ -351,24 +249,9 @@ export const schemaTypes = [
           ]
         }
       },
-      {
-        name: 'image',
-        title: 'Item Image',
-        type: 'image',
-        options: {
-          hotspot: true
-        }
-      },
-      {
-        name: 'isCombo',
-        title: 'Is Combo Item',
-        type: 'boolean'
-      },
-      {
-        name: 'isFeatured',
-        title: 'Featured Item',
-        type: 'boolean'
-      },
+      { name: 'image', title: 'Item Image', type: 'image', options: { hotspot: true } },
+      { name: 'isCombo', title: 'Is Combo Item', type: 'boolean' },
+      { name: 'isFeatured', title: 'Featured Item', type: 'boolean' },
       {
         name: 'tags',
         title: 'Tags',

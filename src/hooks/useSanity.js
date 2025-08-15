@@ -15,14 +15,11 @@ export const useSiteImages = () => {
           title,
           heroImage,
           logo,
-          menuImages[]{
-            image,
-            alt,
-            category
-          },
-          galleryImages[]
+          "menuImages": menuImages[]{ image, alt, category },
+          "galleryImages": galleryImages[]{ image, alt, caption },
+          "eventsGallery": eventsGallery[]{ image, alt, caption, order }
         }`
-        
+
         const result = await client.fetch(query)
         setImages(result)
       } catch (err) {
@@ -58,7 +55,7 @@ export const useFooterInfo = () => {
           socialMedia,
           copyright
         }`
-        
+
         const result = await client.fetch(query)
         setFooterInfo(result)
       } catch (err) {
@@ -94,7 +91,7 @@ export const useMenuItems = () => {
           isFeatured,
           tags
         }`
-        
+
         const result = await client.fetch(query)
         setMenuItems(result)
       } catch (err) {
@@ -121,7 +118,7 @@ export const useLocations = () => {
       try {
         const query = `*[_type == "locations"][0]{
           title,
-          restaurants[]{
+          restaurants[] {
             name,
             address,
             area,
@@ -130,14 +127,14 @@ export const useLocations = () => {
             mapUrl,
             embedUrl
           },
-          foodTruck{
+          foodTruck {
             name,
             description,
             phone,
             email
           }
         }`
-        
+
         const result = await client.fetch(query)
         setLocations(result)
       } catch (err) {
@@ -173,7 +170,7 @@ export const useFeaturedItems = () => {
           isCombo,
           tags
         }`
-        
+
         const result = await client.fetch(query)
         setFeaturedItems(result)
       } catch (err) {
