@@ -2,6 +2,7 @@ import React from 'react';
 import { MapPin, Phone, Clock, Mail, Navigation, Calendar } from 'lucide-react';
 import { Language } from '../hooks/useLanguage';
 import { content } from '../data/content';
+import { useFooterInfo } from '../hooks/useSanity';
 
 interface LocationsProps {
   language: Language;
@@ -10,7 +11,9 @@ interface LocationsProps {
 
 export const Locations: React.FC<LocationsProps> = ({ language, onReserveClick }) => {
   const t = content[language];
+  const { footerInfo, loading } = useFooterInfo();
 
+  // Locations statiques (ne changent pas)
   const locations = [
     {
       name: t.locations.saldanha,
@@ -21,10 +24,10 @@ export const Locations: React.FC<LocationsProps> = ({ language, onReserveClick }
     },
     {
       name: t.locations.gulbenkian,
-      address: 'Av. Conde Valbom 57',
+      address: 'Av. Conde Valbom 61A, 1050-067 Lisboa',
       area: 'Gulbenkian, Lisboa',
-      mapUrl: 'https://goo.gl/maps/gulbenkian-location',
-      embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3112.1234567890123!2d-9.1567890123456!3d38.7456789012345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzjCsDQ0JzQwLjQiTiA5wrAwOSczMC40Ilc!5e0!3m2!1sen!2spt!4v1234567890124!5m2!1sen!2spt&q=Av.+Conde+Valbom+57,+Lisboa'
+      mapUrl: 'https://maps.app.goo.gl/vFhjnR3TECMCjh7TA?g_st=ipc',
+      embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3112.1234567890123!2d-9.1567890123456!3d38.7456789012345!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzjCsDQ0JzQwLjQiTiA5wrAwOSczMC40Ilc!5e0!3m2!1sen!2spt!4v1234567890124!5m2!1sen!2spt&q=Av.+Conde+Valbom+61A,+Lisboa'
     },
     {
       name: t.locations.foodTruck,
@@ -34,6 +37,15 @@ export const Locations: React.FC<LocationsProps> = ({ language, onReserveClick }
       embedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d51984.47312117728!2d-9.1876806!3d38.7436214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzjCsDQ0JzM3LjAiTiA5wrAxMScxNS42Ilc!5e0!3m2!1sen!2spt!4v1234567890125!5m2!1sen!2spt&q=Lisboa,+Portugal'
     }
   ];
+
+  // Utilise les données Sanity seulement pour les infos de contact
+  const contactPhone = !loading && footerInfo?.contactInfo?.phone 
+    ? footerInfo.contactInfo.phone 
+    : '+351 936 656 390';
+
+  const contactEmail = !loading && footerInfo?.contactInfo?.email 
+    ? footerInfo.contactInfo.email 
+    : 'ladosapt@gmail.com';
 
   return (
     <section id="locations" className="py-20 bg-white">
@@ -51,7 +63,7 @@ export const Locations: React.FC<LocationsProps> = ({ language, onReserveClick }
           </p>
         </div>
 
-        {/* Location Cards */}
+        {/* Location Cards - STATIQUES */}
         <div className="grid lg:grid-cols-3 gap-8 mb-16">
           {locations.map((location, index) => (
             <div 
@@ -126,7 +138,7 @@ export const Locations: React.FC<LocationsProps> = ({ language, onReserveClick }
           ))}
         </div>
 
-        {/* Contact Information */}
+        {/* Get in Touch - AVEC SANITY */}
         <div className="bg-gray-50 rounded-2xl p-8 animate-slide-up" style={{ animationDelay: '0.4s' }}>
           <div className="text-center mb-8">
             <h3 className="text-2xl font-display font-semibold text-primary mb-4">
@@ -140,9 +152,16 @@ export const Locations: React.FC<LocationsProps> = ({ language, onReserveClick }
             </p>
           </div>
           
+          {/* Loading State */}
+          {loading && (
+            <div className="text-center mb-6">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            </div>
+          )}
+          
           <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
             <a
-              href="tel:+351936656390"
+              href={`tel:${contactPhone}`}
               className="group flex items-center space-x-4 bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:bg-primary hover:text-white"
             >
               <div className="w-12 h-12 bg-primary group-hover:bg-white rounded-full flex items-center justify-center transition-colors">
@@ -152,12 +171,12 @@ export const Locations: React.FC<LocationsProps> = ({ language, onReserveClick }
                 <p className="text-sm text-gray-500 group-hover:text-white/80 mb-1">
                   {language === 'en' ? 'Call us' : 'Ligue-nos'}
                 </p>
-                <p className="font-semibold text-lg">+351 936 656 390</p>
+                <p className="font-semibold text-lg">{contactPhone}</p>
               </div>
             </a>
             
             <a
-              href="mailto:geral@indiandosa.pt"
+              href={`mailto:${contactEmail}`}
               className="group flex items-center space-x-4 bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:bg-secondary hover:text-white"
             >
               <div className="w-12 h-12 bg-secondary group-hover:bg-white rounded-full flex items-center justify-center transition-colors">
@@ -167,7 +186,7 @@ export const Locations: React.FC<LocationsProps> = ({ language, onReserveClick }
                 <p className="text-sm text-gray-500 group-hover:text-white/80 mb-1">
                   {language === 'en' ? 'Email us' : 'Envie-nos email'}
                 </p>
-                <p className="font-semibold text-lg">geral@indiandosa.pt</p>
+                <p className="font-semibold text-lg">{contactEmail}</p>
               </div>
             </a>
           </div>
