@@ -1,8 +1,11 @@
+// src/components/Story.tsx
 import React from 'react';
 import { useState } from 'react';
 import { Heart, Award, Leaf } from 'lucide-react';
 import { Language } from '../hooks/useLanguage';
 import { content } from '../data/content';
+import { useSiteImages } from '../hooks/useSanity';
+import { urlFor } from '../lib/sanity';
 
 interface StoryProps {
   language: Language;
@@ -11,24 +14,13 @@ interface StoryProps {
 export const Story: React.FC<StoryProps> = ({ language }) => {
   const t = content[language];
   const [showFullStory, setShowFullStory] = useState(false);
+  const { images, loading } = useSiteImages();
 
-  const values = [
-    {
-      icon: Award,
-      title: t.story.values.authenticity.title,
-      desc: t.story.values.authenticity.desc
-    },
-    {
-      icon: Heart,
-      title: t.story.values.passion.title,
-      desc: t.story.values.passion.desc
-    },
-    {
-      icon: Leaf,
-      title: t.story.values.savor.title,
-      desc: t.story.values.savor.desc
-    }
-  ];
+  // Génère l'URL avec urlFor si l'image existe dans Sanity
+  const bgSrc = images?.storyBackground ? urlFor(images.storyBackground).auto('format').width(2000).url() : null
+
+  // fallback (optionnel) : remplace par une image locale si tu préfères
+  const fallback = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1600&q=60'
 
   return (
     <section id="about" className="py-20 relative overflow-hidden">
@@ -36,7 +28,7 @@ export const Story: React.FC<StoryProps> = ({ language }) => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-fixed"
         style={{
-          backgroundImage: 'url("https://lh3.googleusercontent.com/pw/AP1GczOEFEqceG8NRDdC8jYT1lqU3_-ohXAtvvit-RmkmV7Za4tPGEMjpvC6YRQKqsNfpU4ZHH1QiwFN3Tu6eZaATeXy4Sf3om8HHi8xJ4tWtZBy3i9GLSO8ttaSjKtuG8cQB_15wocCjc93-BvOZ5QnGrxu=w1080-h720-s-no-gm?authuser=1")',
+          backgroundImage: bgSrc ? `url("${bgSrc}")` : `url("${fallback}")`,
         }}
       >
         <div className="absolute inset-0 bg-black/60" />
@@ -47,8 +39,6 @@ export const Story: React.FC<StoryProps> = ({ language }) => {
           <h2 className="text-4xl font-display font-bold text-white mb-6">
             {t.story.title}
           </h2>
-          
-          {/* Background Image - positioned to start after title */}
           
           <div className="text-lg text-white leading-relaxed mb-4 space-y-4">
             {t.story.text.split('\n\n').map((paragraph, index) => (
@@ -74,7 +64,23 @@ export const Story: React.FC<StoryProps> = ({ language }) => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto relative z-10">
-          {values.map((value, index) => {
+          {[
+            {
+              icon: Award,
+              title: t.story.values.authenticity.title,
+              desc: t.story.values.authenticity.desc
+            },
+            {
+              icon: Heart,
+              title: t.story.values.passion.title,
+              desc: t.story.values.passion.desc
+            },
+            {
+              icon: Leaf,
+              title: t.story.values.savor.title,
+              desc: t.story.values.savor.desc
+            }
+          ].map((value, index) => {
             const Icon = value.icon;
             return (
               <div 
@@ -99,3 +105,5 @@ export const Story: React.FC<StoryProps> = ({ language }) => {
     </section>
   );
 };
+
+export default Story;

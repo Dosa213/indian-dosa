@@ -1,4 +1,3 @@
-// sanity/schemas/index.js
 export const schemaTypes = [
   // Schema pour les images du site
   {
@@ -7,17 +6,43 @@ export const schemaTypes = [
     type: 'document',
     fields: [
       { name: 'title', title: 'Title', type: 'string' },
+
       {
         name: 'heroImage',
         title: 'Hero Background Image',
         type: 'image',
         options: { hotspot: true }
       },
+
       {
         name: 'logo',
         title: 'Site Logo',
         type: 'image',
         options: { hotspot: true }
+      },
+
+      // NOUVEAU : image de fond pour la section Story
+      {
+        name: 'storyBackground',
+        title: 'Story Background Image',
+        type: 'image',
+        options: { hotspot: true },
+        description: 'Image de fond affichée dans la section Story'
+      },
+
+      // Welcome popup image + alt
+      {
+        name: 'welcomePopupImage',
+        title: 'Welcome Popup Image',
+        type: 'image',
+        options: { hotspot: true },
+        description: 'Image affichée dans le popup de bienvenue (Welcome Popup)'
+      },
+      {
+        name: 'welcomePopupAlt',
+        title: 'Welcome Popup Image Alt Text',
+        type: 'string',
+        description: "Texte alternatif pour l'image du welcome popup"
       },
 
       // menuImages
@@ -35,13 +60,15 @@ export const schemaTypes = [
                 name: 'category',
                 title: 'Category',
                 type: 'string',
-                options: { list: [
-                  { title: 'Dosas', value: 'dosas' },
-                  { title: 'Curries', value: 'curries' },
-                  { title: 'Snacks', value: 'snacks' },
-                  { title: 'Desserts', value: 'desserts' },
-                  { title: 'Beverages', value: 'beverages' }
-                ]}
+                options: {
+                  list: [
+                    { title: 'Dosas', value: 'dosas' },
+                    { title: 'Curries', value: 'curries' },
+                    { title: 'Snacks', value: 'snacks' },
+                    { title: 'Desserts', value: 'desserts' },
+                    { title: 'Beverages', value: 'beverages' }
+                  ]
+                }
               }
             ]
           }
@@ -138,7 +165,7 @@ export const schemaTypes = [
     ]
   },
 
-  // other schemas (locations, footerInfo, menuItem) — copie les tiennes ici
+  // other schemas (locations, footerInfo, menuItem)
   {
     name: 'locations',
     title: 'Locations',
@@ -184,7 +211,7 @@ export const schemaTypes = [
     ]
   },
 
-  // footerInfo and menuItem ... (garde tes définitions actuelles)
+  // footerInfo
   {
     name: 'footerInfo',
     title: 'Footer Information',
@@ -227,6 +254,7 @@ export const schemaTypes = [
     ]
   },
 
+  // menuItem
   {
     name: 'menuItem',
     title: 'Menu Items',
