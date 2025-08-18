@@ -95,7 +95,7 @@ export const Story: React.FC<StoryProps> = ({ language }) => {
                   {value.title}
                 </h3>
                 <p className="text-white/90">
-                  {value.desc}j
+                  {value.desc}
                 </p>
               </div>
             );
