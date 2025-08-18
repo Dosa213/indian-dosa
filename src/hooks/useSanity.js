@@ -1,11 +1,10 @@
-// src/hooks/useSanity.js
 import { useState, useEffect } from 'react'
 import { client } from '../lib/sanity'
 
 /**
  * Hook: useSiteImages
  * Récupère le document siteImages et plusieurs galleries (dosaImages, coffeeGallery, eventsGallery, galleryImages, menuImages)
- * Expose aussi menuPdfUrl (menuPdf.asset->url)
+ * Expose aussi menuPdfUrl (menuPdf.asset->url), storyBackground (image object) et welcomePopupImage / welcomePopupAlt
  */
 export const useSiteImages = () => {
   const [images, setImages] = useState(null)
@@ -26,7 +25,10 @@ export const useSiteImages = () => {
           "eventsGallery": eventsGallery[]{ image, alt, caption, order },
           "coffeeGallery": coffeeGallery[]{ image, alt, caption, order },
           "dosaImages": dosaImages[]{ image, alt, caption, order },
-          "menuPdfUrl": menuPdf.asset->url
+          "menuPdfUrl": menuPdf.asset->url,
+          "storyBackground": storyBackground,
+          "welcomePopupImage": welcomePopupImage,    // objet image complet
+          "welcomePopupAlt": welcomePopupAlt         // texte alternatif
         }`
 
         const result = await client.fetch(query)
