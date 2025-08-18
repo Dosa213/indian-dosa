@@ -15,7 +15,7 @@ const EventsGallery: React.FC = () => {
   const [currentImage, setCurrentImage] = useState(0)
 
   const gallery = images?.eventsGallery ?? []
-  const sortedGallery = [...gallery].sort((a, b) => (a?.order ?? 0) - (b?.order ?? 0))
+  const sortedGallery = [...gallery].sort((a: any, b: any) => (a?.order ?? 0) - (b?.order ?? 0))
 
   useEffect(() => {
     if (!sortedGallery.length) return
@@ -45,7 +45,7 @@ const EventsGallery: React.FC = () => {
       })}
 
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-        {sortedGallery.map((_, index) => (
+        {sortedGallery.map((_: any, index: number) => (
           <button
             key={index}
             onClick={() => setCurrentImage(index)}
@@ -68,15 +68,39 @@ export const Events: React.FC<EventsProps> = ({ language }) => {
     guests: '',
     message: ''
   })
+  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Event booking:', formData)
-    alert(language === 'en'
-      ? 'Thank you! We will contact you soon about your event.'
-      : 'Obrigado! Entraremos em contacto em breve sobre o seu evento.'
-    )
-    setFormData({ name: '', email: '', type: '', date: '', guests: '', message: '' })
+    setStatus(null)
+
+    // client-side validation minimal
+    if (!formData.name || !formData.email || !formData.type || !formData.date) {
+      setStatus({ ok: false, message: language === 'en' ? 'Please fill required fields' : 'Veuillez remplir les champs requis' })
+      return
+    }
+
+    setLoading(true)
+    try {
+      const res = await fetch('/api/send-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setStatus({ ok: false, message: data?.message || 'Error sending request' })
+      } else {
+        setStatus({ ok: true, message: language === 'en' ? 'Request sent — we will contact you soon.' : 'Demande envoyée — nous vous contacterons bientôt.' })
+        setFormData({ name: '', email: '', type: '', date: '', guests: '', message: '' })
+      }
+    } catch (err) {
+      console.error(err)
+      setStatus({ ok: false, message: language === 'en' ? 'Network error' : 'Erreur réseau' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -166,12 +190,19 @@ export const Events: React.FC<EventsProps> = ({ language }) => {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent mb-6"
               />
 
+              {status && (
+                <div className={`mb-4 text-sm ${status.ok ? 'text-green-600' : 'text-red-600'}`}>
+                  {status.message}
+                </div>
+              )}
+
               <button
                 type="submit"
-                className="w-full bg-secondary text-white py-3 rounded-lg hover:bg-secondary/90 transition-colors duration-200 flex items-center justify-center space-x-2"
+                disabled={loading}
+                className="w-full bg-secondary text-white py-3 rounded-lg hover:bg-secondary/90 transition-colors duration-200 flex items-center justify-center space-x-2 disabled:opacity-60"
               >
                 <Send className="w-5 h-5" />
-                <span>{t.events.bookTruck}</span>
+                <span>{loading ? (language === 'en' ? 'Sending...' : 'Envoi...') : t.events.bookTruck}</span>
               </button>
             </form>
           </div>
@@ -180,3 +211,5 @@ export const Events: React.FC<EventsProps> = ({ language }) => {
     </section>
   )
 }
+
+export default Events
