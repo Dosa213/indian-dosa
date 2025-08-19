@@ -197,7 +197,7 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
         }
 
         .animate-parallax {
-          animation: parallax 5s linear infinite;
+          animation: parallax 4s linear infinite;
         }
 
         @media (min-width: 768px) {
