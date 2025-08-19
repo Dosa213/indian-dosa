@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
     const RESEND_API_KEY = process.env.RESEND_API_KEY
     const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'ladosapt@gmail.com'
-    const FROM_EMAIL = process.env.FROM_EMAIL || 'no-reply@indian-dosa.com'
+    const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev'
     const SITE_NAME = process.env.SITE_NAME || 'Indian Dosa'
 
     if (!RESEND_API_KEY) {
@@ -64,10 +64,16 @@ export default async function handler(req, res) {
       return res.status(500).json({ ok: false, message: 'Failed to send email to admin' })
     }
 
-    const adminData = await resp.json().catch(() => ({}))
+    // FIX: Handle JSON parsing properly
+    let adminData = {}
+    try {
+      adminData = await resp.json()
+    } catch (jsonError) {
+      console.warn('Could not parse response as JSON:', jsonError)
+    }
 
     // Envoi de confirmation à l'utilisateur (non bloquant)
-    (async () => {
+    setImmediate(async () => {
       try {
         const userHtml = `
           <h3>Merci ${escapeHtml(name)} — ${escapeHtml(SITE_NAME)}</h3>
@@ -90,7 +96,7 @@ export default async function handler(req, res) {
       } catch (err) {
         console.warn('Warning: failed to send confirmation to user', err)
       }
-    })()
+    })
 
     return res.status(200).json({ ok: true, id: adminData?.id ?? null })
   } catch (err) {
