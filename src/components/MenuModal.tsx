@@ -14,23 +14,17 @@ interface MenuModalProps {
 
 const extractDriveFileId = (url: string): string | null => {
   if (!url) return null
-  // /d/FILEID/
-  const match1 = url.match(/\/d\/([a-zA-Z0-9_-]+)\//)
-  if (match1?.[1]) return match1[1]
-  // ?id=FILEID or &id=FILEID
-  const match2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/)
-  if (match2?.[1]) return match2[1]
+  const m1 = url.match(/\/d\/([a-zA-Z0-9_-]+)\//)
+  if (m1?.[1]) return m1[1]
+  const m2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/)
+  if (m2?.[1]) return m2[1]
   return null
 }
 
-const getDirectPdfUrl = (url: string) => {
+const getDirectPdfUrl = (url: string | null) => {
   if (!url) return null
   const id = extractDriveFileId(url)
-  if (id) {
-    // direct download/raw file served by Drive (works better with native PDF viewers)
-    return `https://drive.google.com/uc?export=download&id=${id}`
-  }
-  // otherwise assume it's already a direct link to a PDF (or a viewer)
+  if (id) return `https://drive.google.com/uc?export=download&id=${id}`
   return url
 }
 
@@ -41,15 +35,55 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
   const rawMenuUrl = sanityData?.menuPdfUrl ?? null
   const pdfUrl = getDirectPdfUrl(rawMenuUrl)
 
-  // SSR guard (Next.js)
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
+  React.useEffect(() => {
+    return () => {
+      // cleanup if needed on unmount
+    }
+  }, [])
+
+  // blob state
+  const [blobUrl, setBlobUrl] = React.useState<string | null>(null)
+  const [fetchError, setFetchError] = React.useState<string | null>(null)
+  const [fetching, setFetching] = React.useState(false)
+
+  React.useEffect(() => {
+    if (!isOpen || !pdfUrl) return
+    let cancelled = false
+    let objectUrl: string | null = null
+
+    async function fetchPdf() {
+      setFetching(true)
+      setFetchError(null)
+      setBlobUrl(null)
+      try {
+        const resp = await fetch(pdfUrl, { mode: 'cors' })
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
+        const blob = await resp.blob()
+        objectUrl = URL.createObjectURL(blob)
+        if (!cancelled) setBlobUrl(objectUrl)
+      } catch (err: any) {
+        console.error('PDF fetch error:', err)
+        if (!cancelled) setFetchError(String(err.message || err))
+      } finally {
+        if (!cancelled) setFetching(false)
+      }
+    }
+
+    fetchPdf()
+
+    return () => {
+      cancelled = true
+      if (objectUrl) URL.revokeObjectURL(objectUrl)
+    }
+  }, [isOpen, pdfUrl])
 
   if (!mounted) return null
   if (!isOpen) return null
 
-  // Loading state in portal
-  if (loading) {
+  // Loading UI
+  if (loading || fetching) {
     return ReactDOM.createPortal(
       <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 p-4">
         <div className="rounded-lg bg-white/5 p-6">
@@ -60,26 +94,16 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
     )
   }
 
-  if (!pdfUrl) {
-    // nothing to show
-    return null
-  }
+  if (!pdfUrl) return null
 
   const modal = (
     <div
       className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 p-4"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose()
-      }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
       role="dialog"
       aria-modal="true"
-      aria-label={t?.menu?.title || 'Menu'}
     >
-      <div
-        className="relative w-full max-w-4xl max-h-[92dvh] flex flex-col"
-        style={{ WebkitOverflowScrolling: 'touch' }}
-      >
-        {/* Close button */}
+      <div className="relative w-full max-w-4xl max-h-[92dvh] flex flex-col" style={{ WebkitOverflowScrolling: 'touch' }}>
         <button
           onClick={onClose}
           aria-label={t?.menu?.close || 'Close menu'}
@@ -88,59 +112,39 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
           <X className="w-5 h-5" />
         </button>
 
-        {/* Scrollable wrapper */}
-        <div
-          className="w-full h-full overflow-auto rounded-lg bg-white"
-          style={{
-            maxHeight: '92dvh',
-            WebkitOverflowScrolling: 'touch',
-            touchAction: 'pan-y',
-            padding: 8
-          }}
-        >
-          {/* Primary embed using <object> */}
-          <object
-            data={pdfUrl}
-            type="application/pdf"
-            className="w-full block"
-            style={{
-              height: 'min(82dvh, 900px)',
-              width: '100%',
-              border: '0',
-              borderRadius: 8,
-            }}
-          >
-            {/* Fallback <embed> for browsers that prefer it */}
-            <embed
-              src={pdfUrl}
-              type="application/pdf"
-              style={{
-                height: 'min(82dvh, 900px)',
-                width: '100%',
-                border: '0',
-                borderRadius: 8,
-              }}
-            />
-            {/* Final fallback: link to open in new tab */}
+        <div className="w-full h-full overflow-auto rounded-lg bg-white" style={{ maxHeight: '92dvh', WebkitOverflowScrolling: 'touch', padding: 8 }}>
+          {fetchError ? (
             <div className="p-6 text-center">
-              <p className="mb-3">
-                {t?.menu?.cannotDisplayPdfMessage ??
-                  'Cannot display PDF inline. Click the button below to open the full menu.'}
-              </p>
-              <a
-                href={pdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-4 py-2 rounded-full bg-primary text-white hover:bg-primary/90"
-                onClick={(e) => {
-                  // allow link to open but also close the modal
-                  onClose()
-                }}
-              >
-                {t?.menu?.openFullMenu || 'Open full menu'}
+              <p className="mb-3">Cannot fetch PDF inline: {fetchError}</p>
+              <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="inline-block px-4 py-2 rounded-full bg-primary text-white">
+                Open full menu
               </a>
             </div>
-          </object>
+          ) : blobUrl ? (
+            // embed the blob URL
+            <object
+              data={blobUrl}
+              type="application/pdf"
+              className="w-full block"
+              style={{ height: 'min(82dvh,900px)', width: '100%', border: 0, borderRadius: 8 }}
+            >
+              <embed
+                src={blobUrl}
+                type="application/pdf"
+                style={{ height: 'min(82dvh,900px)', width: '100%', border: 0, borderRadius: 8 }}
+              />
+              <div className="p-6 text-center">
+                <p className="mb-3">Cannot display PDF inline.</p>
+                <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="inline-block px-4 py-2 rounded-full bg-primary text-white">
+                  Open full menu
+                </a>
+              </div>
+            </object>
+          ) : (
+            <div className="p-6 text-center">
+              <p>Preparing PDF...</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
