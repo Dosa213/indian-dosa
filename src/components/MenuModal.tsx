@@ -13,7 +13,7 @@ interface MenuModalProps {
 
 export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language }) => {
   const t = content[language]
-  const sanityData = useSanity() // wrapper: contient menuPdfUrl si présent
+  const sanityData = useSanity()
   const loading = (sanityData as any).loading
 
   if (!isOpen) return null
@@ -23,13 +23,10 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
   if (!menuPdfUrl) return null
 
   const getPreviewUrl = (url: string) => {
-    // Supporte les liens Google Drive classiques et preview ; sinon renvoie l'URL directe
-    // exemple Drive: https://drive.google.com/file/d/ID/view?usp=sharing
     const driveMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)\//)
     if (driveMatch?.[1]) {
       return `https://drive.google.com/file/d/${driveMatch[1]}/preview`
     }
-    // si c'est un lien de partage "open?id=ID"
     const openIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/)
     if (openIdMatch?.[1]) {
       return `https://drive.google.com/file/d/${openIdMatch[1]}/preview`
@@ -37,50 +34,48 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
     return url
   }
 
-  const pdfUrl = getPreviewUrl(menuPdfUrl)
+  const pdfPreviewUrl = getPreviewUrl(menuPdfUrl)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-1 md:p-4 overflow-hidden">
-      <div className="bg-white rounded-xl w-full h-full max-w-6xl max-h-[99vh] md:max-h-[95vh] relative overflow-hidden flex flex-col">
-        <div className="absolute top-2 right-2 md:top-4 md:right-4 z-10">
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors bg-white shadow-lg"
-            aria-label={t?.menu?.close || 'Close menu'}
-          >
-            <X className="w-5 h-5 md:w-6 md:h-6" />
-          </button>
-        </div>
-        
-        {/* Mobile-friendly iframe container */}
-        <div className="w-full h-full relative">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
+      {/* Conteneur modal (plus petit que full-screen, mais sans fond blanc) */}
+      <div
+        className="relative w-full max-w-4xl max-h-[90vh] flex items-center justify-center"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
+        {/* Bouton fermer */}
+        <button
+          onClick={onClose}
+          aria-label={t?.menu?.close || 'Close menu'}
+          className="absolute top-3 right-3 z-50 p-2 rounded-full backdrop-blur-sm bg-black/40 hover:bg-black/50 text-white shadow-lg"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        {/* Wrapper scrollable pour l'iframe */}
+        <div
+          className="w-full h-full overflow-auto"
+          style={{ maxHeight: '90vh', borderRadius: 12 }}
+        >
           <iframe
-            src={pdfUrl}
-            className="w-full h-full border-0 rounded-xl"
+            src={pdfPreviewUrl}
             title={t?.menu?.title || 'Menu'}
+            className="w-full h-[90vh] border-0"
+            style={{
+              borderRadius: 12,
+              minHeight: '60vh',
+              background: 'transparent'
+            }}
             allowFullScreen
             allow="fullscreen"
-            style={{
-              minHeight: '100%',
-              minWidth: '100%',
-              overflow: 'auto'
-            }}
           />
         </div>
       </div>
-      
-      <style jsx>{`
-        @media (max-width: 767px) {
-          .fixed.inset-0 {
-            padding: 8px;
-          }
-          
-          iframe {
-            transform: scale(1);
-            transform-origin: top left;
-          }
-        }
-      `}</style>
     </div>
   )
 }
