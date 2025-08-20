@@ -197,7 +197,7 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
         }
 
         .animate-gallery-scroll {
-          animation: parallax 2s linear infinite;
+          animation: parallax 5s linear infinite;
         }
 
         @media (min-width: 768px) {
