@@ -4,16 +4,29 @@ import { Language } from '../hooks/useLanguage';
 import { content } from '../data/content';
 import { useSiteImages } from '../hooks/useSanity';
 import { urlFor } from '../lib/sanity';
+import { useSanity } from '../hooks/useSanity'; // Import useSanity hook
 
 interface HeroProps {
   language: Language;
-  onMenuClick: () => void;
   onReserveClick: () => void;
+  // Removed onMenuClick since we're handling it directly
 }
 
-export const Hero: React.FC<HeroProps> = ({ language, onMenuClick, onReserveClick }) => {
+export const Hero: React.FC<HeroProps> = ({ language, onReserveClick }) => {
   const t = content[language];
   const { images, loading } = useSiteImages();
+  const sanityData = useSanity(); // Get Sanity data including menuPdfUrl
+
+  // Function to handle menu click
+  const handleMenuClick = () => {
+    if (sanityData.menuPdfUrl) {
+      // Open menu in a new tab
+      window.open(sanityData.menuPdfUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      // Fallback: alert user if menu is not available
+      alert(language === 'en' ? 'Menu is currently unavailable' : 'Menu indisponível no momento');
+    }
+  };
 
   // Image de fallback si Sanity n'est pas disponible
   const fallbackImage = 'url("https://lh3.googleusercontent.com/pw/AP1GczOFP3Ex5PFOy_-__Q7A77xiAseYL-BBeQNnIVYMNDPSHnNUQGGKvsaAGh9yky4VaNqlkXvDr00gZ0oxicXQZeR75JBKxaMeh72vCMvUgdslxpVG9y3qTLBvjAxGg4k7-jn5ciWan3pTWyvEc_YM8uLT=w3216-h2008-s-no-gm?authuser=1")';
@@ -52,7 +65,7 @@ export const Hero: React.FC<HeroProps> = ({ language, onMenuClick, onReserveClic
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
           <button
-            onClick={onMenuClick}
+            onClick={handleMenuClick} // Use the new handler
             className="group flex items-center justify-center space-x-3 bg-accent text-gray-900 px-8 py-4 rounded-full text-lg font-semibold hover:bg-accent/90 transform hover:scale-105 transition-all duration-300"
           >
             <Eye className="w-5 h-5 group-hover:rotate-12 transition-transform" />
@@ -92,4 +105,4 @@ export const Hero: React.FC<HeroProps> = ({ language, onMenuClick, onReserveClic
       `}</style>
     </section>
   );
-};
+};  
