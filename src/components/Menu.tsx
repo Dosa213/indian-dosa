@@ -171,7 +171,7 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
         </div>
 
         <div className="relative overflow-hidden">
-          <div className="flex animate-parallax md:animate-parallax-desktop space-x-6">
+          <div className="flex animate-gallery-scroll space-x-6">
             {[...displayGalleryImages, ...displayGalleryImages].map((image: string, index: number) => (
               <div key={index} className="flex-shrink-0">
                 <img
@@ -196,13 +196,13 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
           }
         }
 
-        .animate-parallax {
-          animation: parallax 4s linear infinite;
+        .animate-gallery-scroll {
+          animation: parallax 2s linear infinite;
         }
 
         @media (min-width: 768px) {
-          .animate-parallax-desktop {
-            animation: parallax 30s linear infinite;
+          .animate-gallery-scroll {
+            animation: parallax 7s linear infinite;
           }
         }
       `}</style>

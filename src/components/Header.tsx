@@ -49,13 +49,14 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <img 
-              src="https://lh3.googleusercontent.com/pw/AP1GczOaKawDXoEOBqw1IJmYtMUxQ3bB_CtiQ_SC5D0M0BfEU7G0efxHOoCtt2uw6lVNv1nezoycIqF1NyzeruFW_JgPk36xfUA62gthvjww1ejrQW_-yMm6S0UEBGn9EepJdeUzaMYAQXZvgK8Fcp718w7j=w1277-h1280-s-no-gm?authuser=1"
-              alt="Indian Dosa Logo"
-              className="w-14 h-14 object-contain"
-            />
-          </div>
+          <a href="#home" className="flex items-center space-x-2 cursor-pointer">
+  <img 
+    src="https://lh3.googleusercontent.com/pw/AP1GczOaKawDXoEOBqw1IJmYtMUxQ3bB_CtiQ_SC5D0M0BfEU7G0efxHOoCtt2uw6lVNv1nezoycIqF1NyzeruFW_JgPk36xfUA62gthvjww1ejrQW_-yMm6S0UEBGn9EepJdeUzaMYAQXZvgK8Fcp718w7j=w1277-h1280-s-no-gm?authuser=1"
+    alt="Indian Dosa Logo"
+    className="w-14 h-14 object-contain"
+  />
+</a>
+
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-8">

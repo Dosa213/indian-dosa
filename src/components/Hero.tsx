@@ -25,11 +25,13 @@ export const Hero: React.FC<HeroProps> = ({ language, onMenuClick, onReserveClic
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image with Parallax Effect */}
+      {/* Background Image with Responsive Behavior */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-fixed transition-all duration-1000"
+        className="absolute inset-0 bg-cover bg-center md:bg-fixed transition-all duration-1000"
         style={{
           backgroundImage: heroBackgroundImage,
+          backgroundPosition: 'center center',
+          backgroundAttachment: 'scroll'
         }}
       >
         <div className="absolute inset-0 bg-black/40" />
@@ -73,6 +75,21 @@ export const Hero: React.FC<HeroProps> = ({ language, onMenuClick, onReserveClic
           <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse" />
         </div>
       </div>
+
+      <style jsx>{`
+        @media (max-width: 767px) {
+          #home > div:first-child {
+            background-attachment: scroll !important;
+            background-position: center center !important;
+          }
+        }
+        
+        @media (min-width: 768px) {
+          #home > div:first-child {
+            background-attachment: fixed !important;
+          }
+        }
+      `}</style>
     </section>
   );
 };

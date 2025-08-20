@@ -24,11 +24,13 @@ export const Story: React.FC<StoryProps> = ({ language }) => {
 
   return (
     <section id="about" className="py-20 relative overflow-hidden">
-      {/* Background Image */}
+      {/* Background Image - Fixed for Mobile */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-fixed"
+        className="absolute inset-0 bg-cover bg-center md:bg-fixed"
         style={{
           backgroundImage: bgSrc ? `url("${bgSrc}")` : `url("${fallback}")`,
+          backgroundPosition: 'center center',
+          backgroundAttachment: 'scroll'
         }}
       >
         <div className="absolute inset-0 bg-black/60" />
@@ -102,6 +104,21 @@ export const Story: React.FC<StoryProps> = ({ language }) => {
           })}
         </div>
       </div>
+
+      <style jsx>{`
+        @media (max-width: 767px) {
+          #about > div:first-child {
+            background-attachment: scroll !important;
+            background-position: center center !important;
+          }
+        }
+        
+        @media (min-width: 768px) {
+          #about > div:first-child {
+            background-attachment: fixed !important;
+          }
+        }
+      `}</style>
     </section>
   );
 };
