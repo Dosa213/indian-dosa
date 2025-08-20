@@ -5,7 +5,9 @@ import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Story } from './components/Story';
 import { Menu } from './components/Menu';
-import { MenuModal } from './components/MenuModal';
+// nouveau (import par défaut)
+import MenuModal from './components/MenuModal'
+
 import { Events } from './components/Events';
 import { DosaCoffee } from './components/DosaCoffee';
 import { Testimonials } from './components/Testimonials';
