@@ -38,44 +38,33 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
       onClick={(e) => {
+        // fermer si clic sur le fond (pas si clic dans l'iframe)
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      {/* Conteneur modal (plus petit que full-screen, mais sans fond blanc) */}
-      <div
-        className="relative w-full max-w-4xl max-h-[90vh] flex items-center justify-center"
-        style={{ WebkitOverflowScrolling: 'touch' }}
+      {/* Bouton fermer — visible sans panneau blanc */}
+      <button
+        onClick={onClose}
+        aria-label={t?.menu?.close || 'Close menu'}
+        className="absolute top-4 right-4 z-50 p-2 rounded-full backdrop-blur-sm bg-black/40 hover:bg-black/50 text-white shadow-lg"
       >
-        {/* Bouton fermer */}
-        <button
-          onClick={onClose}
-          aria-label={t?.menu?.close || 'Close menu'}
-          className="absolute top-3 right-3 z-50 p-2 rounded-full backdrop-blur-sm bg-black/40 hover:bg-black/50 text-white shadow-lg"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        <X className="w-5 h-5" />
+      </button>
 
-        {/* Wrapper scrollable pour l'iframe */}
-        <div
-          className="w-full h-full overflow-auto"
-          style={{ maxHeight: '90vh', borderRadius: 12 }}
-        >
-          <iframe
-            src={pdfPreviewUrl}
-            title={t?.menu?.title || 'Menu'}
-            className="w-full h-[90vh] border-0"
-            style={{
-              borderRadius: 12,
-              minHeight: '60vh',
-              background: 'transparent'
-            }}
-            allowFullScreen
-            allow="fullscreen"
-          />
-        </div>
-      </div>
+      {/* Iframe full-bleed */}
+      <iframe
+        src={pdfPreviewUrl}
+        title={t?.menu?.title || 'Menu'}
+        className="w-full h-full border-0"
+        style={{
+          minHeight: '100vh',
+          minWidth: '100vw',
+        }}
+        allowFullScreen
+        allow="fullscreen"
+      />
     </div>
   )
 }
