@@ -34,37 +34,64 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
     return url
   }
 
+  // Google Docs Viewer (fallback) - utile si l'embed natif échoue
+  const getGViewUrl = (url: string) => {
+    // gview nécessite une url accessible publiquement (direct link). Si tu utilises drive preview, gview peut ne pas fonctionner.
+    return `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(url)}`
+  }
+
   const pdfPreviewUrl = getPreviewUrl(menuPdfUrl)
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-1 md:p-4"
       onClick={(e) => {
-        // fermer si clic sur le fond (pas si clic dans l'iframe)
+        // fermer si clic sur le background (pas si clic dans la modale)
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      {/* Bouton fermer — visible sans panneau blanc */}
-      <button
-        onClick={onClose}
-        aria-label={t?.menu?.close || 'Close menu'}
-        className="absolute top-4 right-4 z-50 p-2 rounded-full backdrop-blur-sm bg-black/40 hover:bg-black/50 text-white shadow-lg"
+      <div
+        className="bg-white rounded-xl w-full h-full max-w-6xl max-h-[99vh] md:max-h-[95vh] relative overflow-hidden"
+        style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.25)' }}
       >
-        <X className="w-5 h-5" />
-      </button>
+        <div className="absolute top-2 right-2 md:top-4 md:right-4 z-10">
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors bg-white shadow-lg"
+            aria-label={t?.menu?.close || 'Close menu'}
+          >
+            <X className="w-5 h-5 md:w-6 md:h-6" />
+          </button>
+        </div>
 
-      {/* Iframe full-bleed */}
-      <iframe
-        src={pdfPreviewUrl}
-        title={t?.menu?.title || 'Menu'}
-        className="w-full h-full border-0"
-        style={{
-          minHeight: '100vh',
-          minWidth: '100vw',
-        }}
-        allowFullScreen
-        allow="fullscreen"
-      />
+        {/* Contenu scrollable de la modale */}
+        <div
+          className="w-full h-full relative overflow-auto"
+          style={{
+            maxHeight: 'calc(100vh - 2rem)',
+            WebkitOverflowScrolling: 'touch',
+            padding: 8
+          }}
+        >
+          {/* Essayons d'abord <object> (meilleur rendu natif pour PDF) */}
+          <object
+            data={pdfPreviewUrl}
+            type="application/pdf"
+            aria-label={t?.menu?.title || 'Menu'}
+            className="w-full h-full"
+            style={{ minHeight: '70vh', borderRadius: 12 }}
+          >
+            {/* Fallback si <object> n'affiche pas le PDF : Google Viewer ou iframe */}
+            <iframe
+              src={getGViewUrl(pdfPreviewUrl)}
+              title={t?.menu?.title || 'Menu'}
+              className="w-full h-full border-0"
+              style={{ minHeight: '70vh', borderRadius: 12 }}
+              sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+            />
+          </object>
+        </div>
+      </div>
     </div>
   )
 }
