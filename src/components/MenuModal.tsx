@@ -12,44 +12,58 @@ interface MenuModalProps {
   language: Language
 }
 
+const extractDriveFileId = (url: string): string | null => {
+  if (!url) return null
+  // /d/FILEID/
+  const match1 = url.match(/\/d\/([a-zA-Z0-9_-]+)\//)
+  if (match1?.[1]) return match1[1]
+  // ?id=FILEID or &id=FILEID
+  const match2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/)
+  if (match2?.[1]) return match2[1]
+  return null
+}
+
+const getDirectPdfUrl = (url: string) => {
+  if (!url) return null
+  const id = extractDriveFileId(url)
+  if (id) {
+    // direct download/raw file served by Drive (works better with native PDF viewers)
+    return `https://drive.google.com/uc?export=download&id=${id}`
+  }
+  // otherwise assume it's already a direct link to a PDF (or a viewer)
+  return url
+}
+
 export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language }) => {
   const t = content[language]
   const sanityData = useSanity() as any
   const loading = !!sanityData?.loading
-  const menuPdfUrl = sanityData?.menuPdfUrl ?? null
+  const rawMenuUrl = sanityData?.menuPdfUrl ?? null
+  const pdfUrl = getDirectPdfUrl(rawMenuUrl)
 
-  // Guard for SSR (Next.js etc.)
+  // SSR guard (Next.js)
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
 
   if (!mounted) return null
   if (!isOpen) return null
+
+  // Loading state in portal
   if (loading) {
-    // small spinner while loading
     return ReactDOM.createPortal(
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div className="rounded-lg bg-white/10 p-6">
+      <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 p-4">
+        <div className="rounded-lg bg-white/5 p-6">
           <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white mx-auto" />
         </div>
       </div>,
       document.body
     )
   }
-  if (!menuPdfUrl) return null
 
-  const getPreviewUrl = (url: string) => {
-    const driveMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)\//)
-    if (driveMatch?.[1]) {
-      return `https://drive.google.com/file/d/${driveMatch[1]}/preview`
-    }
-    const openIdMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/)
-    if (openIdMatch?.[1]) {
-      return `https://drive.google.com/file/d/${openIdMatch[1]}/preview`
-    }
-    return url
+  if (!pdfUrl) {
+    // nothing to show
+    return null
   }
-
-  const pdfPreviewUrl = getPreviewUrl(menuPdfUrl)
 
   const modal = (
     <div
@@ -59,6 +73,7 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
       }}
       role="dialog"
       aria-modal="true"
+      aria-label={t?.menu?.title || 'Menu'}
     >
       <div
         className="relative w-full max-w-4xl max-h-[92dvh] flex flex-col"
@@ -73,30 +88,59 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
           <X className="w-5 h-5" />
         </button>
 
-        {/* Scroll wrapper so iframe can be scrolled on small screens */}
+        {/* Scrollable wrapper */}
         <div
-          className="w-full h-full overflow-auto rounded-lg"
+          className="w-full h-full overflow-auto rounded-lg bg-white"
           style={{
             maxHeight: '92dvh',
             WebkitOverflowScrolling: 'touch',
-            touchAction: 'pan-y'
+            touchAction: 'pan-y',
+            padding: 8
           }}
         >
-          {/* Iframe: use dynamic viewport units (dvh) to avoid mobile address-bar issues */}
-          <iframe
-            src={pdfPreviewUrl}
-            title={t?.menu?.title || 'Menu'}
+          {/* Primary embed using <object> */}
+          <object
+            data={pdfUrl}
+            type="application/pdf"
             className="w-full block"
             style={{
-              minHeight: '60dvh',
               height: 'min(82dvh, 900px)',
+              width: '100%',
               border: '0',
               borderRadius: 8,
-              background: 'transparent'
             }}
-            allowFullScreen
-            allow="fullscreen"
-          />
+          >
+            {/* Fallback <embed> for browsers that prefer it */}
+            <embed
+              src={pdfUrl}
+              type="application/pdf"
+              style={{
+                height: 'min(82dvh, 900px)',
+                width: '100%',
+                border: '0',
+                borderRadius: 8,
+              }}
+            />
+            {/* Final fallback: link to open in new tab */}
+            <div className="p-6 text-center">
+              <p className="mb-3">
+                {t?.menu?.cannotDisplayPdfMessage ??
+                  'Cannot display PDF inline. Click the button below to open the full menu.'}
+              </p>
+              <a
+                href={pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-4 py-2 rounded-full bg-primary text-white hover:bg-primary/90"
+                onClick={(e) => {
+                  // allow link to open but also close the modal
+                  onClose()
+                }}
+              >
+                {t?.menu?.openFullMenu || 'Open full menu'}
+              </a>
+            </div>
+          </object>
         </div>
       </div>
     </div>
