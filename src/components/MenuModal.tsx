@@ -40,8 +40,8 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
   const pdfUrl = getPreviewUrl(menuPdfUrl)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 md:p-4">
-      <div className="bg-white rounded-xl w-full h-full max-w-6xl max-h-[98vh] md:max-h-[95vh] relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-1 md:p-4 overflow-hidden">
+      <div className="bg-white rounded-xl w-full h-full max-w-6xl max-h-[99vh] md:max-h-[95vh] relative overflow-hidden flex flex-col">
         <div className="absolute top-2 right-2 md:top-4 md:right-4 z-10">
           <button
             onClick={onClose}
@@ -59,23 +59,13 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
             className="w-full h-full border-0 rounded-xl"
             title={t?.menu?.title || 'Menu'}
             allowFullScreen
+            allow="fullscreen"
             style={{
               minHeight: '100%',
-              minWidth: '100%'
+              minWidth: '100%',
+              overflow: 'auto'
             }}
           />
-          
-          {/* Fallback link for mobile if iframe doesn't work well */}
-          <div className="md:hidden absolute bottom-4 left-4 right-4">
-            <a
-              href={menuPdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-center bg-primary text-white py-3 px-6 rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              {language === 'en' ? 'Open Menu in New Tab' : 'Abrir Menu em Nova Aba'}
-            </a>
-          </div>
         </div>
       </div>
       
