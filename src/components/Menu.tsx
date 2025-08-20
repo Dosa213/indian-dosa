@@ -1,4 +1,3 @@
-// src/components/Menu.tsx
 import React from 'react'
 import { Eye } from 'lucide-react'
 import { Language } from '../hooks/useLanguage'
@@ -152,6 +151,9 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
                   alt={item.name || 'menu item'}
                   className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
                   loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.src = PLACEHOLDER_FEATURED;
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
@@ -165,20 +167,26 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
           ))}
         </div>
 
-        {/* Food Gallery */}
+        {/* Food Gallery - Updated for mobile */}
         <div className="text-center mb-8">
           <h3 className="text-2xl font-display font-semibold text-primary mb-8">{t.menu.gallery}</h3>
         </div>
 
         <div className="relative overflow-hidden">
-          <div className="flex animate-gallery-scroll space-x-6">
+          <div className="flex animate-gallery-scroll space-x-4 md:space-x-6">
             {[...displayGalleryImages, ...displayGalleryImages].map((image: string, index: number) => (
-              <div key={index} className="flex-shrink-0">
+              <div 
+                key={index} 
+                className="flex-shrink-0 w-48 h-32 md:w-64 md:h-40"
+              >
                 <img
                   src={image || PLACEHOLDER_GALLERY}
-                  alt={`Food gallery ${index + 1}`}
-                  className="w-64 h-40 object-cover rounded-lg shadow-md"
+                  alt={`Food gallery ${index % displayGalleryImages.length + 1}`}
+                  className="w-full h-full object-cover rounded-lg shadow-md"
                   loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.src = PLACEHOLDER_GALLERY;
+                  }}
                 />
               </div>
             ))}
@@ -197,12 +205,46 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
         }
 
         .animate-gallery-scroll {
-          animation: parallax 5s linear infinite;
+          animation: parallax 30s linear infinite;
+          width: max-content;
         }
 
-        @media (min-width: 768px) {
+        /* Pause animation on hover for better UX */
+        .animate-gallery-scroll:hover {
+          animation-play-state: paused;
+        }
+
+        @media (max-width: 768px) {
           .animate-gallery-scroll {
-            animation: parallax 7s linear infinite;
+            animation: parallax 40s linear infinite;
+          }
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+          .animate-gallery-scroll {
+            animation: none;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 8px;
+          }
+          
+          .animate-gallery-scroll::-webkit-scrollbar {
+            height: 6px;
+          }
+          
+          .animate-gallery-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+          }
+          
+          .animate-gallery-scroll::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+          }
+          
+          .animate-gallery-scroll::-webkit-scrollbar-thumb:hover {
+            background: #555;
           }
         }
       `}</style>
