@@ -15,7 +15,7 @@
     "@sanity/image-url": "^1.1.0",
     "@sanity/vision": "^3.99.0",
     "lucide-react": "^0.344.0",
-    "pdfjs-dist": "^5.3.93",
+    "pdfjs-dist": "^5.4.54",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-is": "^19.1.1",

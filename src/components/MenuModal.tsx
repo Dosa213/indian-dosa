@@ -1,3 +1,4 @@
+// src/components/MenuModal.tsx
 import React from 'react'
 import { X } from 'lucide-react'
 import { Language } from '../hooks/useLanguage'
@@ -37,42 +38,32 @@ export const MenuModal: React.FC<MenuModalProps> = ({ isOpen, onClose, language 
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-2 overflow-y-auto"
-      // Changed items-center to items-start for better handling on small screens (prevents vertical clipping).
-      // Added overflow-y-auto to the outer fixed div as a fallback for extreme cases.
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      {/* Popup — added h-[92vh] to give explicit height, making h-full on children reliable. */}
-      <div
-        className="relative w-full max-w-4xl h-[92vh] max-h-[92vh] flex flex-col"
-        style={{ WebkitOverflowScrolling: 'touch' }}
-      >
-        {/* Bouton fermer */}
-        <button
-          onClick={onClose}
-          aria-label={t?.menu?.close || 'Close menu'}
-          className="absolute top-3 right-3 z-50 p-2 rounded-full backdrop-blur-sm bg-black/40 hover:bg-black/50 text-white shadow"
-        >
-          <X className="w-5 h-5" />
-        </button>
+      {/* Modal container */}
+      <div className="relative w-full max-w-6xl h-full max-h-[90vh] bg-white rounded-lg overflow-hidden flex flex-col">
+        {/* Header with close button */}
+        <div className="flex justify-between items-center p-4 border-b bg-white">
+          <h2 className="text-xl font-semibold text-primary">{t?.menu?.title || 'Menu'}</h2>
+          <button
+            onClick={onClose}
+            aria-label={t?.menu?.close || 'Close menu'}
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
 
-        {/* Wrapper scrollable */}
-        <div
-          className="w-full h-full overflow-auto"
-          style={{
-            WebkitOverflowScrolling: 'touch',
-            touchAction: 'pan-y'
-          }}
-        >
-          {/* Iframe — changed height to 100% to fill the parent adaptively. Removed minHeight and calc for flexibility. */}
+        {/* Iframe container */}
+        <div className="flex-1 overflow-hidden">
           <iframe
             src={pdfPreviewUrl}
             title={t?.menu?.title || 'Menu'}
             className="w-full h-full"
             style={{
-              border: '0',
-              borderRadius: 8,
-              background: 'transparent'
+              border: 'none',
+              minHeight: '500px'
             }}
             allowFullScreen
             allow="fullscreen"
