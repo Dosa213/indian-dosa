@@ -2,12 +2,12 @@ import React from 'react'
 import { Eye } from 'lucide-react'
 import { Language } from '../hooks/useLanguage'
 import { content } from '../data/content'
-import { useFeaturedItems, useSiteImages } from '../hooks/useSanity'
+import { useFeaturedItems, useSiteImages, useSanity } from '../hooks/useSanity' // Add useSanity import
 import { urlFor } from '../lib/sanity'
 
 interface MenuProps {
   language: Language;
-  onFullMenuClick: () => void;
+  onFullMenuClick: () => void; // Keep this for backward compatibility if needed elsewhere
 }
 
 const PLACEHOLDER_FEATURED = 'https://via.placeholder.com/400x300?text=No+Image'
@@ -51,6 +51,18 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
   const t = content[language]
   const { featuredItems, loading: featuredLoading } = useFeaturedItems()
   const { images, loading: imagesLoading } = useSiteImages()
+  const sanityData = useSanity() // Get Sanity data including menuPdfUrl
+
+  // Function to handle full menu click - same as Hero component
+  const handleFullMenuClick = () => {
+    if (sanityData.menuPdfUrl) {
+      // Open menu in a new tab
+      window.open(sanityData.menuPdfUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      // Fallback: alert user if menu is not available
+      alert(language === 'en' ? 'Menu is currently unavailable' : 'Menu indisponível no momento');
+    }
+  };
 
   // Fallback statique (tu peux garder ou remplacer)
   const staticFeaturedItems = [
@@ -122,7 +134,7 @@ export const Menu: React.FC<MenuProps> = ({ language, onFullMenuClick }) => {
           </h2>
           <p className="text-lg text-gray-600 mb-8">{t.menu.subtitle}</p>
           <button
-            onClick={onFullMenuClick}
+            onClick={handleFullMenuClick} // Use the new handler instead of onFullMenuClick
             className="inline-flex items-center space-x-2 bg-primary text-white px-8 py-3 rounded-full hover:bg-primary/90 transition-colors duration-200"
           >
             <Eye className="w-5 h-5" />
